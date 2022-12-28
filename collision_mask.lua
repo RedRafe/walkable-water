@@ -2,9 +2,9 @@
 function filter(tableIn, excludeValue)
   local tmp = {}
   for _, tableValue in pairs(tableIn) do
-      if tableValue ~= excludeValue then
-        table.insert(tmp, tableValue)
-      end
+    if tableValue ~= excludeValue then
+      table.insert(tmp, tableValue)
+    end
   end
   return tmp
 end
@@ -18,7 +18,7 @@ function removeCollisionMask(source, name, mask)
       else
         log("collision_mask of " .. name .. " not found")
       end
-      if data.raw[entity][name].collision_mask ~= nil then
+      if data.raw[source][name].collision_mask ~= nil then
         log("This collision mask is available")
       end
     else

@@ -16,7 +16,7 @@ data:extend({
   {
     type          = "bool-setting",
     name          = "ww-enable-spawner",
-    default_value = false,
+    default_value = true,
     setting_type  = "startup",
     order         = "ww-030"
   }
