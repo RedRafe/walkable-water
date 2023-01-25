@@ -1,85 +1,80 @@
-require("collision_mask")
+---------------------------------------------------------------------------
+-- -- Function import
+---------------------------------------------------------------------------
 
-ww = {}
+local CollisionMaskUtil = require("collision-mask-util")
+local insert = table.insert
+local mu = ww.mask_util
+local du = ww.data_util
+local startup           = du.getStartupSettingByKey
+local applyToEntity     = du.applyToChildren
+local applyToFiltEntity = du.applyToFilteredChildren
 
-ww.enable_player  = settings.startup["ww-enable-player"].value
-ww.enable_unit    = settings.startup["ww-enable-unit"].value
-ww.enable_spawner = settings.startup["ww-enable-spawner"].value
+---------------------------------------------------------------------------
 
---if ww.enable_spawner then
---  ww.enable_unit = true
---end
+local water_tiles = {"water", "water-green", "deepwater", "deepwater-green", "water-wube"}
+--TODO: check alien biomes compatibility
 
-local collision_mask_util = require("collision-mask-util")
-ww.fist_unused_layer = collision_mask_util.get_first_unused_layer()
+---------------------------------------------------------------------------
+-- -- Load sartup settings
+---------------------------------------------------------------------------
+--["water"] = { "water-tile", "resource-layer", "item-layer", "player-layer", "doodad-layer" },
+--["character"] = {"player-layer", "train-layer", "consider-tile-transitions"},
+--["unit-spawner"] = {"item-layer", "object-layer", "player-layer", "water-tile"},
+--["unit"] = {"player-layer", "train-layer", "not-colliding-with-itself"},
 
-ww.tiles = {"water", "water-green", "deepwater", "deepwater-green", "water-wube"}
 
-ww.collision_masks = {
-  ["water"] = {
-    "water-tile",
-    "resource-layer",
-    "item-layer",
-    --"player-layer",
-    "doodad-layer"
-  },
-  ["character"] = {
-    "player-layer",
-    "train-layer",
-    "consider-tile-transitions"
-  },
-  ["unit"] = {
-    "player-layer",
-    "train-layer",
-    "not-colliding-with-itself"
-  },
-  ["spawner"] = {
-    "item-layer",
-    "object-layer",
-    "player-layer",
-    "water-tile"
-  }
-}
+local player  = startup("ww-enable-player")
+local spawner = startup("ww-enable-spawner")
+local unit    = startup("ww-enable-unit")
 
--- any of the conditions must be true
-if (ww.enable_player or ww.enable_unit or ww.enable_spawners) then
+if (player or spawner or unit) then
+  -- Get 1st unused layer
+  local firstUnUsedLayer = CollisionMaskUtil.get_first_unused_layer()
+  ww.debug.log("First layer: " .. firstUnUsedLayer)
 
-  -- -- set masks
-  -- water
-  table.insert(ww.collision_masks.water, ww.fist_unused_layer)
+  -- Add layer to Water tiles
+  applyToFiltEntity(
+    mu.addLayerToCollisionMask,
+    "tile",
+    water_tiles,
+    firstUnUsedLayer
+  )
+  -- & remove player layer
+  applyToFiltEntity(
+    mu.removeLayerFromCollisionMask,
+    "tile",
+    water_tiles,
+    "player-layer"
+  )
 
-  -- character
-  if not ww.enable_player then
-    table.insert(ww.collision_masks.character, ww.fist_unused_layer)
+  -- Add new dummy "player-layer" AKA 1st Unused to entities not selected
+  if not character then
+    applyToEntity(
+      mu.addLayerToCollisionMask,
+      "character",
+      firstUnUsedLayer
+    )
   end
 
-  -- unit
-  if not ww.enable_unit then
-    table.insert(ww.collision_masks.unit, ww.fist_unused_layer)
+  if not spawner then
+    applyToEntity(
+      mu.addLayerToCollisionMask,
+      "unit-spawner",
+      firstUnUsedLayer
+    )
+    applyToEntity(
+      mu.addLayerToCollisionMask,
+      "turret",
+      firstUnUsedLayer
+    )
   end
 
-  -- spawner
-  if ww.enable_spawner then
-    ww.collision_masks.spawner = { "object-layer", "player-layer" }
+  if not unit then
+    applyToEntity(
+      mu.addLayerToCollisionMask,
+      "unit",
+      firstUnUsedLayer
+    )
   end
-
-  -- -- apply masks
-  -- water
-  for _, tileName in pairs(ww.tiles) do
-    setCollisionMask("tile", tileName, ww.collision_masks.water)
-  end
-
-  -- character
-  if data.raw.character.character.collision_mask then
-    collision_mask_util.add_layer(data.raw.character.character.collision_mask, ww.fist_unused_layer)
-  else
-    setCollisionMask("character", "character", ww.collision_masks.character)
-  end
-
-  -- unit
-  setRawCollisionMask("unit", ww.collision_masks.unit)
-
-  -- spawner & worms
-  setRawCollisionMask("unit-spawner", ww.collision_masks.spawner)
-  setRawCollisionMask("turret", ww.collision_masks.spawner)
 end
