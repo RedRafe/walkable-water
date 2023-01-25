@@ -17,11 +17,11 @@ ww.tiles = {"water", "water-green", "deepwater", "deepwater-green", "water-wube"
 
 ww.collision_masks = {
   ["water"] = {
-	  "water-tile",
-	  "resource-layer",
-	  "item-layer",
-	  --"player-layer",
-	  "doodad-layer"
+    "water-tile",
+    "resource-layer",
+    "item-layer",
+    --"player-layer",
+    "doodad-layer"
   },
   ["character"] = {
     "player-layer",
