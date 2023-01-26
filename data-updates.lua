@@ -68,6 +68,23 @@ if (player or spawner or unit) then
       "turret",
       firstUnUsedLayer
     )
+  else
+    applyToEntity(
+      mu.removeLayersFromCollisionMask,
+      "unit-spawner",
+      {
+        "item-layer",
+        "water-tile"
+      }
+    )
+    applyToEntity(
+      mu.removeLayersFromCollisionMask,
+      "turret",
+      {
+        "item-layer",
+        "water-tile"
+      }
+    )
   end
 
   if not unit then
@@ -76,5 +93,26 @@ if (player or spawner or unit) then
       "unit",
       firstUnUsedLayer
     )
+  end
+
+  for ___, v in pairs(data.raw["unit-spawner"]) do
+    log("-- " .. v.name)
+    log(serpent.block(v.collision_mask))
+  end
+  for ___, v in pairs(data.raw["unit-spawner"]) do
+    log("-- " .. v.name)
+    log(serpent.block(v.collision_mask))
+  end
+  for ___, v in pairs(data.raw["unit"]) do
+    log("-- " .. v.name)
+    log(serpent.block(v.collision_mask))
+  end
+  for ___, v in pairs(data.raw["character"]) do
+    log("-- " .. v.name)
+    log(serpent.block(v.collision_mask))
+  end
+  for ___, v in pairs(water_tiles) do
+    log("-- " .. v)
+    log(serpent.block(data.raw.tile[v].collision_mask))
   end
 end
