@@ -50,9 +50,33 @@ if (player or spawner or unit) then
 
   -- Add new dummy "player-layer" AKA 1st Unused to entities not selected
   if not character then
+    -- Character
     applyToEntity(
       mu.addLayerToCollisionMask,
       "character",
+      firstUnUsedLayer
+    )
+    -- Spidertrons
+    applyToEntity(
+      mu.addLayerToCollisionMask,
+      "spider-leg",
+      firstUnUsedLayer
+    )
+    -- Cars & Tanks
+    local vehicles = du.getChildren("car")
+    if mods["aai-vehicles-ironclad"] then 
+      du.tableRemove(vehicles, "ironclad") 
+    end
+    if mods["Hovercrafts"] then 
+      du.tableRemove(vehicles, "hcraft-entity")
+      du.tableRemove(vehicles, "mcraft-entity")    
+      du.tableRemove(vehicles, "ecraft-entity")
+      du.tableRemove(vehicles, "lcraft-entity")
+    end
+    applyToFiltEntity(
+      mu.addLayerToCollisionMask,
+      "car",
+      vehicles,
       firstUnUsedLayer
     )
   end
@@ -93,26 +117,5 @@ if (player or spawner or unit) then
       "unit",
       firstUnUsedLayer
     )
-  end
-
-  for ___, v in pairs(data.raw["unit-spawner"]) do
-    log("-- " .. v.name)
-    log(serpent.block(v.collision_mask))
-  end
-  for ___, v in pairs(data.raw["unit-spawner"]) do
-    log("-- " .. v.name)
-    log(serpent.block(v.collision_mask))
-  end
-  for ___, v in pairs(data.raw["unit"]) do
-    log("-- " .. v.name)
-    log(serpent.block(v.collision_mask))
-  end
-  for ___, v in pairs(data.raw["character"]) do
-    log("-- " .. v.name)
-    log(serpent.block(v.collision_mask))
-  end
-  for ___, v in pairs(water_tiles) do
-    log("-- " .. v)
-    log(serpent.block(data.raw.tile[v].collision_mask))
   end
 end
