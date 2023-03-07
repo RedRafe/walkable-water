@@ -9,6 +9,8 @@ local function tableContains(tableIn, element)
   return false
 end
 
+-- @ tableIn: Table
+-- @ element: string
 local function tableRemove(tableIn, element)
   for k, v in pairs(tableIn) do -- ipairs can also be used instead of pairs
     if v == element then
