@@ -67,6 +67,9 @@ if (player or spawner or unit) then
     if mods["aai-vehicles-ironclad"] then 
       du.tableRemove(vehicles, "ironclad") 
     end
+    if mods["ironclad-gunboat-and-mortar-turret"] then
+      du.tableRemove(vehicles, "ironclad-gunboat")
+    end
     if mods["Hovercrafts"] then 
       du.tableRemove(vehicles, "hcraft-entity")
       du.tableRemove(vehicles, "mcraft-entity")    
